@@ -32,6 +32,16 @@
     </encoder>
   </appender>
 
+  <logger name="org.springframework.r2dbc" level="debug" additivity="false">
+    <appender-ref ref="STDOUT"/>
+  </logger>
+  <logger name="reactor.core" level="debug" additivity="false">
+    <appender-ref ref="STDOUT"/>
+  </logger>
+  <logger name="io.r2dbc.h2" level="debug" additivity="false">
+    <appender-ref ref="STDOUT"/>
+  </logger>
+
   <root level="INFO">
     <appender-ref ref="STDOUT"/>
     <appender-ref ref="FILE"/>

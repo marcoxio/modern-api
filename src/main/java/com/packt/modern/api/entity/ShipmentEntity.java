@@ -1,20 +1,21 @@
 package com.packt.modern.api.entity;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
 import java.sql.Timestamp;
 import java.util.UUID;
-import javax.persistence.*;
-@Entity
-@Table(name = "shipment")
+@Table("ecomm.shipment")
 public class ShipmentEntity {
     @Id
-    @GeneratedValue
-    @Column(name = "ID", updatable = false, nullable = false)
+    @Column("id")
     private UUID id;
 
-    @Column(name = "EST_DELIVERY_DATE")
+    @Column("est_delivery_date")
     private Timestamp estDeliveryDate;
 
-    @Column(name = "CARRIER")
+    @Column("carrier")
     private String carrier;
 
     public UUID getId() {

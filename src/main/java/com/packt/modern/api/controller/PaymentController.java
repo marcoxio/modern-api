@@ -9,6 +9,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
 @RestController
 public class PaymentController implements PaymentApi {
@@ -21,14 +23,15 @@ public class PaymentController implements PaymentApi {
         this.assembler = assembler;
     }
 
+
     @Override
-    public ResponseEntity<Authorization> authorize(@Valid PaymentReq paymentReq) {
+    public Mono<ResponseEntity<Authorization>> authorize(@Valid Mono<PaymentReq> paymentReq, ServerWebExchange exchange) {
         return null;
     }
 
     @Override
-    public ResponseEntity<Authorization> getOrdersPaymentAuthorization(
-            @NotNull @Valid String id) {
+    public Mono<ResponseEntity<Authorization>> getOrdersPaymentAuthorization(
+            @NotNull @Valid String id, ServerWebExchange exchange) {
         return null;
     }
 }

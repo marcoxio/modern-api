@@ -5,8 +5,12 @@ import com.packt.modern.api.entity.UserEntity;
 import com.packt.modern.api.model.AddCardReq;
 import com.packt.modern.api.repository.CardRepository;
 import com.packt.modern.api.repository.UserRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import javax.validation.Valid;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,31 +27,37 @@ public class CardServiceImpl implements CardService {
 
 
     @Override
-    public void deleteCardById(String id) {
-        repository.deleteById(UUID.fromString(id));
+    public Mono<Void> deleteCardById(String id) {
+        return repository.deleteById(UUID.fromString(id));
 
     }
 
     @Override
-    public Iterable<CardEntity> getAllCards() {
+    public Mono<Void> deleteCardById(UUID id) {
+        return repository.deleteById(id);
+    }
+
+    @Override
+    public Flux<CardEntity> getAllCards() {
         return repository.findAll();
     }
 
     @Override
-    public Optional<CardEntity> getCardById(String id) {
+    public Mono<CardEntity> getCardById(String id) {
         return repository.findById(UUID.fromString(id));
     }
 
     @Override
-    public Optional<CardEntity> registerCard(AddCardReq addCardReq) {
-        return Optional.of(repository.save(toEntity(addCardReq)));
+    public Mono<CardEntity> registerCard(@Valid Mono<AddCardReq> addCardReq) {
+        return addCardReq.map(this::toEntity).flatMap(repository::save);
     }
 
-    private CardEntity toEntity(AddCardReq m) {
+
+    @Override
+    public  CardEntity toEntity(AddCardReq model) {
         CardEntity e = new CardEntity();
-        Optional<UserEntity> user = userRepo.findById(UUID.fromString(m.getUserId()));
-        user.ifPresent(e::setUser);
-        return e.setNumber(m.getCardNumber()).setCvv(m.getCvv())
-                .setExpires(m.getExpires());
+        BeanUtils.copyProperties(model, e);
+        e.setNumber(model.getCardNumber());
+        return e;
     }
 }

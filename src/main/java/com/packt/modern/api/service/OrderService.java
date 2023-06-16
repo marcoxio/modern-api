@@ -2,6 +2,9 @@ package com.packt.modern.api.service;
 
 import com.packt.modern.api.entity.OrderEntity;
 import com.packt.modern.api.model.NewOrder;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -12,7 +15,8 @@ import javax.validation.constraints.NotNull;
  **/
 public interface OrderService {
 
-  public Optional<OrderEntity> addOrder(@Valid NewOrder newOrder);
-  public Iterable<OrderEntity> getOrdersByCustomerId(@NotNull @Valid String customerId);
-  public Optional<OrderEntity> getByOrderId(String id);
+  public Mono<OrderEntity> addOrder(@Valid Mono<NewOrder> newOrder);
+  Mono<OrderEntity> updateMapping(@Valid OrderEntity orderEntity);
+  public Flux<OrderEntity> getOrdersByCustomerId(@NotNull @Valid String customerId);
+  public Mono<OrderEntity> getByOrderId(String id);
 }

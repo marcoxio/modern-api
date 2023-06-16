@@ -2,6 +2,9 @@ package com.packt.modern.api.service;
 
 import com.packt.modern.api.entity.CartEntity;
 import com.packt.modern.api.model.Item;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import java.util.List;
 import javax.validation.Valid;
 
@@ -11,17 +14,14 @@ import javax.validation.Valid;
  **/
 public interface CartService {
 
-  public List<Item> addCartItemsByCustomerId(String customerId, @Valid Item item);
+  public Flux<Item> addCartItemsByCustomerId(CartEntity cartEntity, @Valid Mono<Item> item);
 
-  public List<Item> addOrReplaceItemsByCustomerId(String customerId, @Valid Item item);
+  public Flux<Item> addOrReplaceItemsByCustomerId(CartEntity cartEntity, @Valid Mono<Item> newItem);
 
-  public void deleteCart(String customerId);
+  public Mono<Void> deleteCart(String customerId, String cartId);
 
-  public void deleteItemFromCart(String customerId, String itemId);
+  public Mono<Void> deleteItemFromCart(CartEntity cartEntity, String itemId);
 
-  public CartEntity getCartByCustomerId(String customerId);
+  public Mono<CartEntity> getCartByCustomerId(String customerId);
 
-  public List<Item> getCartItemsByCustomerId(String customerId);
-
-  public Item getCartItemsByItemId(String customerId, String itemId);
 }

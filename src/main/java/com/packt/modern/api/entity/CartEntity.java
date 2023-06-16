@@ -1,32 +1,33 @@
 package com.packt.modern.api.entity;
 
-import javax.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity
-@Table(name = "cart")
+@Table("ecomm.cart")
 public class CartEntity {
 
     @Id
-    @GeneratedValue
-    @Column(name = "ID", updatable = false, nullable = false)
+    @Column("id")
     private UUID id;
 
-    @OneToOne
-    @JoinColumn(name = "USER_ID", referencedColumnName = "ID")
+//    @OneToOne
+//    @JoinColumn(name = "USER_ID", referencedColumnName = "ID")
     private UserEntity user;
 
-    @ManyToMany(
-            cascade = CascadeType.ALL
-    )
-    @JoinTable(
-            name = "CART_ITEM",
-            joinColumns = @JoinColumn(name = "CART_ID"),
-            inverseJoinColumns = @JoinColumn(name = "ITEM_ID")
-    )
+//    @ManyToMany(
+//            cascade = CascadeType.ALL
+//    )
+//    @JoinTable(
+//            name = "CART_ITEM",
+//            joinColumns = @JoinColumn(name = "CART_ID"),
+//            inverseJoinColumns = @JoinColumn(name = "ITEM_ID")
+//    )
     private List<ItemEntity> items = Collections.emptyList();
 
     public UUID getId() {
@@ -71,5 +72,14 @@ public class CartEntity {
     @Override
     public int hashCode() {
         return Objects.hash(user, items);
+    }
+
+    @Override
+    public String toString() {
+        return "CartEntity{" +
+                "id=" + id +
+                ", user=" + user +
+                ", items=" + items +
+                '}';
     }
 }

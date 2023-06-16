@@ -1,5 +1,5 @@
 {
-  "library": "spring-mvc",
+  "library": "spring-boot",
   "dateLibrary": "java8",
   "hideGenerationTimestamp": true,
   "modelPackage": "com.packt.modern.api.model",
@@ -8,6 +8,9 @@
   "serializableModel": true,
   "useTags": true,
   "useGzipFeature" : true,
+  "reactive": true,
+  "interfaceOnly": true,
+  "skipDefaultInterface": "true",
   "hateoas": true,
   "withXml": true,
   "importMappings": {

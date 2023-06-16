@@ -10,6 +10,9 @@ import java.util.List;
 import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 public class ProductController implements ProductApi {
@@ -23,13 +26,14 @@ public class ProductController implements ProductApi {
     }
 
     @Override
-    public ResponseEntity<Product> getProduct(String id) {
-        return service.getProduct(id).map(assembler::toModel).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public Mono<ResponseEntity<Product>> getProduct(String id, ServerWebExchange exchange) {
+        return service.getProduct(id).map(p -> assembler.entityToModel(p, exchange))
+                .map(ResponseEntity::ok).defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @Override
-    public ResponseEntity<List<Product>> queryProducts(@Valid String tag, @Valid String name,
-                                                       @Valid Integer page, @Valid Integer size) {
-        return ok(assembler.toListModel(service.getAllProducts()));
+    public Mono<ResponseEntity<Flux<Product>>> queryProducts(@Valid String tag, @Valid String name,
+                                                             @Valid Integer page, @Valid Integer size, ServerWebExchange exchange) {
+        return Mono.just(ok(assembler.toListModel(service.getAllProducts(), exchange)));
     }
 }

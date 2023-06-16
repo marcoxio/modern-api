@@ -1,6 +1,7 @@
 package com.packt.modern.api.service;
 
 import com.packt.modern.api.entity.AuthorizationEntity;
+import com.packt.modern.api.entity.OrderEntity;
 import com.packt.modern.api.model.PaymentReq;
 import com.packt.modern.api.repository.OrderRepository;
 import com.packt.modern.api.repository.PaymentRepository;
@@ -9,6 +10,7 @@ import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 /**
  * @author : github.com/sharmasourabh
@@ -26,13 +28,14 @@ public class PaymentServiceImpl implements PaymentService {
   }
 
   @Override
-  public Optional<AuthorizationEntity> authorize(@Valid PaymentReq paymentReq) {
-    return Optional.empty();
+  public Mono<AuthorizationEntity> authorize(@Valid Mono<PaymentReq> paymentReq) {
+    return Mono.empty();
   }
 
+
   @Override
-  public Optional<AuthorizationEntity> getOrdersPaymentAuthorization(@NotNull String orderId) {
-    return orderRepo.findById(UUID.fromString(orderId)).map(oe -> oe.getAuthorizationEntity());
+  public Mono<AuthorizationEntity> getOrdersPaymentAuthorization(@NotNull String orderId) {
+    return orderRepo.findById(UUID.fromString(orderId)).map(OrderEntity::getAuthorizationEntity);
   }
 
   /*private AuthorizationEntity toEntity(PaymentReq m) {

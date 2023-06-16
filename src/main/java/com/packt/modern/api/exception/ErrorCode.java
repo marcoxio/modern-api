@@ -14,7 +14,8 @@ public enum ErrorCode {
     RESOURCE_NOT_FOUND("PACKT-0010", "Requested resource not found"),
     CUSTOMER_NOT_FOUND("PACKT-0011", "Requested customer not found"),
     ITEM_NOT_FOUND("PACKT-0012", "Requested item not found"),
-    GENERIC_ALREADY_EXISTS("PACKT-0013", "Already exists.");
+    GENERIC_ALREADY_EXISTS("PACKT-0013", "Already exists."),
+    CARD_ALREADY_EXISTS("PACKT-0013", "Card already exists.");
 
     private String errCode;
     private String errMsgKey;

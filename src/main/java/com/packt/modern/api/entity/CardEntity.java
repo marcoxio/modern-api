@@ -1,32 +1,36 @@
 package com.packt.modern.api.entity;
 
-import javax.persistence.*;
-import java.util.List;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
+import java.util.Objects;
 import java.util.UUID;
 
-@Entity
-@Table(name = "card")
+@Table("ecomm.card")
 public class CardEntity {
     @Id
-    @GeneratedValue
-    @Column(name = "ID", updatable = false, nullable = false)
+    @Column("id")
     private UUID id;
 
-    @Column(name = "NUMBER")
+    @Column("number")
     private String number;
 
-    @Column(name = "EXPIRES")
+    @Column("expires")
     private String expires;
 
-    @Column(name = "CVV")
+    @Column("cvv")
     private String cvv;
 
-    @OneToOne
-    @JoinColumn(name = "USER_ID", referencedColumnName = "ID")
+    @Column("user_id")
+    private String userId;
+
+//    @OneToOne
+//    @JoinColumn(name = "USER_ID", referencedColumnName = "ID")
     private UserEntity user;
 
-    @OneToMany(mappedBy = "cardEntity", fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<OrderEntity> orders;
+//    @OneToMany(mappedBy = "cardEntity", fetch = FetchType.LAZY, orphanRemoval = true)
+    private OrderEntity orderEntity;
 
     public UUID getId() {
         return id;
@@ -73,12 +77,54 @@ public class CardEntity {
         return this;
     }
 
-    public List<OrderEntity> getOrderEntity() {
-        return orders;
+    public OrderEntity getOrderEntity() {
+        return orderEntity;
     }
 
-    public CardEntity setOrderEntity(List<OrderEntity> orders) {
-        this.orders = orders;
+    public CardEntity setOrderEntity(OrderEntity orderEntity) {
+        this.orderEntity = orderEntity;
         return this;
     }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public CardEntity setUserId(String userId) {
+        this.userId = userId;
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        CardEntity that = (CardEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(number, that.number)
+                && Objects.equals(expires, that.expires) && Objects.equals(cvv, that.cvv)
+                && Objects.equals(userId, that.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, number, expires, cvv, userId);
+    }
+
+    @Override
+    public String toString() {
+        return "CardEntity{" +
+                "id=" + id +
+                ", number='" + number + '\'' +
+                ", expires='" + expires + '\'' +
+                ", cvv='" + cvv + '\'' +
+                ", userId='" + userId + '\'' +
+                ", user=" + user +
+                ", orderEntity=" + orderEntity +
+                '}';
+    }
+
 }

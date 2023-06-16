@@ -1,31 +1,24 @@
 package com.packt.modern.api.hateoas;
 
-import com.packt.modern.api.controller.AddressController;
 import com.packt.modern.api.entity.AddressEntity;
 import com.packt.modern.api.model.Address;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.BeanUtils;
-import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.reactive.ReactiveRepresentationModelAssembler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.util.annotation.Nullable;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Component
-public class AddressRepresentationModelAssembler extends RepresentationModelAssemblerSupport<AddressEntity, Address> {
+public class AddressRepresentationModelAssembler implements ReactiveRepresentationModelAssembler<AddressEntity, Address>, HateoasSupport {
 
-    /**
-     * Creates a new {@link RepresentationModelAssemblerSupport} using the given controller class and
-     * resource type.
-     */
-    public AddressRepresentationModelAssembler() {
-        super(AddressController.class, Address.class);
-    }
+    private static String serverUri = null;
 
     /**
      * Coverts the Address entity to resource
@@ -33,14 +26,35 @@ public class AddressRepresentationModelAssembler extends RepresentationModelAsse
      * @param entity
      */
     @Override
-    public Address toModel(AddressEntity entity) {
-        Address resource = createModelWithId(entity.getId(), entity);
+    public Mono<Address> toModel(AddressEntity entity, ServerWebExchange exchange) {
+        return Mono.just(entityToModel(entity, exchange));
+    }
+
+    private String getServerUri(@Nullable ServerWebExchange exchange) {
+        if (Strings.isBlank(serverUri)) {
+            serverUri = getUriComponentBuilder(exchange).toUriString();
+        }
+        return serverUri;
+    }
+
+    public Address entityToModel(AddressEntity entity, ServerWebExchange exchange) {
+        Address resource = new Address();
+        if(Objects.isNull(entity)) {
+            return resource;
+        }
         BeanUtils.copyProperties(entity, resource);
         resource.setId(entity.getId().toString());
+        String serverUri = getServerUri(exchange);
+        resource.add(Link.of(String.format("%s/api/v1/addresses", serverUri)).withRel("addresses"));
         resource.add(
-                WebMvcLinkBuilder.linkTo(methodOn(AddressController.class).getAddressesById(entity.getId().toString()))
-                        .withSelfRel());
+                Link.of(String.format("%s/api/v1/addresses/%s", serverUri, entity.getId())).withSelfRel());
         return resource;
+    }
+
+    public Address getModel(Mono<Address> m) {
+        AtomicReference<Address> model = new AtomicReference<>();
+        m.cache().subscribe(model::set);
+        return model.get();
     }
 
     /**
@@ -48,12 +62,11 @@ public class AddressRepresentationModelAssembler extends RepresentationModelAsse
      *
      * @param entities
      */
-    public List<Address> toListModel(Iterable<AddressEntity> entities) {
+    public Flux<Address> toListModel(Flux<AddressEntity> entities, ServerWebExchange exchange) {
         if (Objects.isNull(entities)) {
-            return Collections.emptyList();
+            return Flux.empty();
         }
 
-        return StreamSupport.stream(entities.spliterator(), false).map(this::toModel)
-                .collect(Collectors.toList());
+        return Flux.from(entities.map(e -> entityToModel(e, exchange)));
     }
 }

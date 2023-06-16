@@ -1,13 +1,13 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '2.5.2'
+	id 'org.springframework.boot' version '2.4.0'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 	id 'org.hidetake.swagger.generator' version '2.18.2'
 }
 
 group = 'com.packt.modern.api'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = JavaVersion.VERSION_15
+sourceCompatibility = '15'
 
 swaggerSources {
 	def typeMappings = 'URI=URI, BigDecimal=BigDecimal, EntityModel=EntityModel'
@@ -47,19 +47,31 @@ dependencies {
 	// OpenAPI Ends
 
 	// DB Starts
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.flywaydb:flyway-core'
-	runtimeOnly 'com.h2database:h2'
+	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+	implementation 'com.h2database:h2'
+	runtimeOnly 'io.r2dbc:r2dbc-h2'
 	// DB Ends
 
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// Flyway: Start
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	// Flyway: End
 
-	testImplementation('org.springframework.boot:spring-boot-starter-test') /*{
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-	}*/
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+//	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	testImplementation 'io.projectreactor:reactor-test'
 }
 
-tasks.named('test') {
-	jvmArgs '--enable-preview'
+configurations.all {
+	resolutionStrategy.dependencySubstitution.all { dependency ->
+		if (dependency.requested instanceof ModuleComponentSelector && dependency.requested.module == 'spring-boot-starter-reactor-netty') {
+			dependency.useTarget("org.springframework.boot:spring-boot-starter-tomcat:$dependency.requested.version", 'Use Undertow instead of Reactor Netty')
+		}
+	}
+}
+
+test {
 	useJUnitPlatform()
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import javax.validation.constraints.Min;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 /**
  * @author : github.com/sharmasourabh
@@ -21,8 +22,8 @@ public class ShipmentServiceImpl implements ShipmentService {
   }
 
   @Override
-  public Iterable<ShipmentEntity> getShipmentByOrderId(
+  public Flux<ShipmentEntity> getShipmentByOrderId(
       @Min(value = 1L, message = "Invalid shipment ID.") String id) {
-    return repository.findAllById(List.of(UUID.fromString(id)));
+    return repository.getShipmentByOrderId(id);
   }
 }

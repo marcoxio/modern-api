@@ -1,48 +1,51 @@
 package com.packt.modern.api.entity;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
 import java.util.UUID;
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
-@Entity
-@Table(name = "product")
+@Table("ecomm.product")
 public class ProductEntity {
 
     @Id
-    @GeneratedValue
-    @Column(name = "ID", updatable = false, nullable = false)
+    @Column("id")
     private UUID id;
 
     @NotNull(message = "Product name is required.")
-    @Basic(optional = false)
-    @Column(name = "NAME")
+//    @Basic(optional = false)
+    @Column("name")
     private String name;
 
-    @Column(name = "DESCRIPTION")
+    @Column("description")
     private String description;
 
-    @Column(name = "PRICE")
+    @Column("price")
     private BigDecimal price;
 
-    @Column(name = "COUNT")
+    @Column("count")
     private int count;
 
-    @Column(name = "IMAGE_URL")
+    @Column("image_url")
     private String imageUrl;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "PRODUCT_TAG",
-            joinColumns = @JoinColumn(name = "PRODUCT_ID"),
-            inverseJoinColumns = @JoinColumn(name = "TAG_ID")
-    )
+//    @OneToMany(cascade = CascadeType.ALL)
+//    @JoinTable(
+//            name = "PRODUCT_TAG",
+//            joinColumns = @JoinColumn(name = "PRODUCT_ID"),
+//            inverseJoinColumns = @JoinColumn(name = "TAG_ID")
+//    )
+    @Transient
     private List<TagEntity> tags = Collections.emptyList();
 
-    @OneToMany(mappedBy = "product")
-    private List<ItemEntity> items;
+//    @OneToMany(mappedBy = "product")
+    private ItemEntity items;
 
     public ProductEntity(UUID id, @NotNull(message = "Product name is required.") String name,
                          String description, BigDecimal price, int count, String imageUrl) {
@@ -120,11 +123,11 @@ public class ProductEntity {
         return this;
     }
 
-    public List<ItemEntity> getItem() {
+    public ItemEntity getItem() {
         return items;
     }
 
-    public ProductEntity setItem(List<ItemEntity> item) {
+    public ProductEntity setItem(ItemEntity item) {
         this.items = item;
         return this;
     }

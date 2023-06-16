@@ -2,6 +2,8 @@ package com.packt.modern.api.service;
 
 import com.packt.modern.api.entity.AuthorizationEntity;
 import com.packt.modern.api.model.PaymentReq;
+import reactor.core.publisher.Mono;
+
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -12,6 +14,6 @@ import javax.validation.constraints.NotNull;
  **/
 public interface PaymentService {
 
-  public Optional<AuthorizationEntity> authorize(@Valid PaymentReq paymentReq);
-  public Optional<AuthorizationEntity> getOrdersPaymentAuthorization(@NotNull String orderId);
+  public Mono<AuthorizationEntity> authorize(@Valid Mono<PaymentReq> paymentReq);
+  public Mono<AuthorizationEntity> getOrdersPaymentAuthorization(@NotNull String orderId);
 }
